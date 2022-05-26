@@ -1,0 +1,106 @@
+1 print last 4 frequently acess urls count in sorted order form /var/log/httpd/access.log
+
+    cat access.log | awk '{print $11}' | sort | uniq -c | sort -r | tail -4
+
+
+2 move file one folder to the respective folder
+#! / bin/bash -x
+touch abc.txt , def.txt , ghi.txt , jkl.txt
+for file in $(ls *.txt )
+do
+folder=$(echo $file | awk -F. '{print $1}')
+echo file:$file
+echo folder:$folder
+if [ -d $folder ]
+then
+rm -R $folder
+fi
+mkdir $folder
+mv $file $folder
+
+
+3 print last 4 frequently access uniq url at particular hours from log files
+cat access.log | awk -vDate=`date -d'now-2 hours' +[%d/%b/%Y:%H:%M:%S]` ' $4 > Date
+{print Date,$0}' | awk -F\http:// ' {print $1}' | awk ' {print $12}' | sort | uniq -c | sort -rn | tail -4
+
+
+4 Append current date to all log files name which has extension .log.1 from a folder
+#! /bin/bash -x
+touch abc.log.1 def.log.1 ghi.log.1 jkl.log.1 mno.log.1
+
+for file in `ls *.log.1`
+do 
+f1=`echo $file | awk -F. '{print $1}'`
+f2=`echo $file | awk -F. '{print $2}'`
+date=$(date "+%d%m%y")
+newFile=$f1-$date.$f2
+mv $file $newFile
+echo "New updated file name - $newFile "
+done
+
+
+5 print list of last 10 unique sorted client ip from access.log
+   cat access.log | awk '{print $1}' | sort| uniq -c | sort -r| tail -4
+
+
+6 print the list of web response code in the unique sorted order at sepecific hours
+   cat access.log | awk -vDate=`date -d'now-2hours' +[%d/%b/%Y:%H:%M:%S]` '$4 >Date {print    Date,$0}' | awk '{print $10}' |sort | uniq -c | sort –nr
+
+7 Archive the files from /var/log folder which have modified 7 day ago and move it to your back up folder
+#! /bin/bash
+for file in pwd
+do
+touch modified.txt
+echo "$(find -type f -mtime -7)"> modified.txt
+if [ -d backup ]
+then
+rm -R backup
+fi
+mkdir backup
+mv modified.txt backup
+cat backup/modified.txt
+done
+
+
+8 check if a folder exist or not if it is not present create it
+#! /bin/bash -x
+
+read folderName
+if [ -d $folderName ]
+then
+echo "folder already exist"
+else
+mkdir $folderName
+echo "created new folder"
+fi
+
+
+9 execute command "hello" and "ls" and check its execution status and print whether command executed successful or not
+#! /bin/bash -x
+echo "write a command"
+read command
+$command
+value=$( echo $? )
+if [ $value -eq 0 ]
+then
+echo "command is executed"
+else
+echo "command is not executed"
+fi
+
+
+10 set environment variable usersecret = "dH34xJaa23" if it its already not set
+env | grep usersecret 
+       export usersecret="dH34xjaa23"
+       echo $usersecret
+
+
+11 Data analysis
+(i) print employeename and  totalpay who has basepay greater  then 10000
+Ans  cat data.csv | awk '{if ($4 >10000){ print $2, $7}}'
+(ii) what i s aggrigate  totalpay of employees whose  jobtitle is "captain"
+Ans cat data.csv | grep -i captain | awk '{sum = sum+$7} END {print sum}
+(iii) print  jobtitle and overtimepay who has overtimepay is between 7000 and 10000
+Ans cat data.csv | awk '{ if( $5 > 7000 && $5<10000) {print $3, $5}}
+(iv) print average basepay
+Ans  cat data.csv | awk '{sum = sum+$4} END {print sum/NR}'
